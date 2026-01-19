@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { login } from "@/app/actions/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -39,13 +40,24 @@ export function LoginForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      // Mock API call for demonstration
-      console.log(values);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: "Logged In",
-        description: "Welcome back!",
-      });
+      const formData = new FormData();
+      formData.append('email', values.email);
+      formData.append('password', values.password);
+
+      const result = await login(formData);
+
+      if (result?.error) {
+        toast({
+          title: "Login Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Logged In",
+          description: "Welcome back!",
+        });
+      }
     });
   }
 

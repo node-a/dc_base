@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { signup } from "@/app/actions/auth";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required." }),
@@ -45,14 +46,27 @@ export function CreateAccountForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      // Mock API call
-      console.log(values);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: "Account Created",
-        description: "Welcome to DC Base! Please sign in.",
-      });
-      router.push('/');
+      const formData = new FormData();
+      formData.append('firstName', values.firstName);
+      formData.append('lastName', values.lastName);
+      formData.append('email', values.email);
+      formData.append('password', values.password);
+
+      const result = await signup(formData);
+
+      if (result?.error) {
+        toast({
+          title: "Signup Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Account Created",
+          description: "Welcome to DC Base! Please sign in.",
+        });
+        router.push('/');
+      }
     });
   }
 
