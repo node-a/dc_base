@@ -1,5 +1,2 @@
-# Firebase Studio
-
-This is a NextJS starter in Firebase Studio.
-
-To get started, take a look at src/app/page.tsx.
+# front end
+create an apple style minimal login and account create page. account creation requires first name, last name, email, and password when create the account. and login page only requires email and password.
