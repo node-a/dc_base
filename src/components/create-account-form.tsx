@@ -50,7 +50,7 @@ export function CreateAccountForm() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast({
         title: "Account Created",
-        description: "Welcome to Aqua Access! Please sign in.",
+        description: "Welcome to DC Base! Please sign in.",
       });
       router.push('/');
     });
@@ -60,7 +60,7 @@ export function CreateAccountForm() {
     <Card className="w-full border-none shadow-xl">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
-        <CardDescription>Get started with Aqua Access today.</CardDescription>
+        <CardDescription>Get started with DC Base today.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

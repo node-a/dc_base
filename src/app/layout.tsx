@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Aqua Access',
-  description: 'Minimalist login and account creation.',
+  title: 'DC Base',
+  description: 'Your new database hub.',
 };
 
 export default function RootLayout({

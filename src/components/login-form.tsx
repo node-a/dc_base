@@ -53,7 +53,7 @@ export function LoginForm() {
     <Card className="w-full border-none shadow-xl">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-        <CardDescription>Sign in to continue to Aqua Access</CardDescription>
+        <CardDescription>Sign in to continue to DC Base</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
