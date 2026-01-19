@@ -69,3 +69,35 @@ export async function createOpportunity(formData: FormData) {
 
     return { success: true }
 }
+
+export async function deleteOpportunity(opportunityCode: string) {
+    const supabase = await createClient()
+
+    // Check if user is authenticated
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+        return { error: 'You must be logged in to delete an opportunity' }
+    }
+
+    if (!opportunityCode) {
+        return { error: 'Opportunity code is required' }
+    }
+
+    // Delete the opportunity (RLS policy ensures user can only delete their own)
+    const { error: deleteError } = await supabase
+        .from('opportunity')
+        .delete()
+        .eq('opportunity_code', opportunityCode)
+        .eq('user_id', user.id)
+
+    if (deleteError) {
+        console.error('Opportunity deletion error:', deleteError.message)
+        return { error: deleteError.message }
+    }
+
+    // Revalidate the dashboard page to reflect the deletion
+    revalidatePath('/dashboard')
+
+    return { success: true }
+}

@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AddOpportunityForm } from '@/components/add-opportunity-form';
 import { logout } from '@/app/actions/auth';
-import { LogOut, Plus } from 'lucide-react';
+import { deleteOpportunity } from '@/app/actions/opportunity';
+import { LogOut, Plus, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Opportunity {
     opportunity_code: string;
@@ -31,12 +34,16 @@ interface Profile {
 
 export default function DashboardPage() {
     const router = useRouter();
+    const { toast } = useToast();
     const [user, setUser] = useState<any>(null);
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [opportunityToDelete, setOpportunityToDelete] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         async function loadData() {
@@ -93,6 +100,47 @@ export default function DashboardPage() {
         if (opps) {
             setOpportunities(opps);
         }
+    };
+
+    const handleDeleteClick = (opportunityCode: string) => {
+        setOpportunityToDelete(opportunityCode);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!opportunityToDelete) return;
+
+        setIsDeleting(true);
+        const result = await deleteOpportunity(opportunityToDelete);
+
+        if (result?.error) {
+            toast({
+                title: 'Failed to Delete Opportunity',
+                description: result.error,
+                variant: 'destructive',
+            });
+        } else {
+            toast({
+                title: 'Success',
+                description: 'Opportunity deleted successfully!',
+            });
+
+            // Refresh opportunities
+            const supabase = createClient();
+            const { data: opps } = await supabase
+                .from('opportunity')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (opps) {
+                setOpportunities(opps);
+            }
+        }
+
+        setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        setOpportunityToDelete(null);
     };
 
     if (loading) {
@@ -166,6 +214,7 @@ export default function DashboardPage() {
                                             <TableHead>Owner</TableHead>
                                             <TableHead className="text-right">Amount</TableHead>
                                             <TableHead>Support Period</TableHead>
+                                            <TableHead className="w-[50px]"></TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -193,6 +242,16 @@ export default function DashboardPage() {
                                                         ? `${new Date(opp.support_start_date).toLocaleDateString()} - ${new Date(opp.support_end_date).toLocaleDateString()}`
                                                         : '-'}
                                                 </TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => handleDeleteClick(opp.opportunity_code)}
+                                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -201,6 +260,29 @@ export default function DashboardPage() {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Delete Confirmation Dialog */}
+                <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the opportunity
+                                <span className="font-semibold"> {opportunityToDelete}</span>.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={handleDeleteConfirm}
+                                disabled={isDeleting}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                                {isDeleting ? 'Deleting...' : 'Delete'}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </main>
     );
