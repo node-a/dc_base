@@ -1,23 +1,25 @@
-# Aqua Access
+# DC Base
 
-Aqua Access is a modern, minimalist authentication platform designed with a focus on simplicity, security, and a premium user experience inspired by Apple's design philosophy.
+DC Base (standing for DC Database) is a modern authentication and data management platform designed with a focus on simplicity, security, and a clean **minimal style**.
 
 ## 🌟 Features
 
-- **Apple-Style Minimalism**: A clean, spacious UI with a focus on typography and whitespace.
-- **Secure Authentication**: robust account creation and login workflows powered by Supabase.
+- **Minimal Style**: A clean, spacious UI with a focus on functional design and clarity.
+- **Secure Authentication**: Robust user authentication workflows powered by **Supabase Auth**.
+- **Integrated Database**: Data is hosted and securely managed on **Supabase**, providing a scalable and high-performance backend.
+- **Optimized Deployment**: Built for seamless deployment and scaling on **Firebase App Hosting**.
 - **Session Management**: Secure token-based session handling with middleware protection.
 - **AI Integration**: Built with Google Genkit, ready for intelligent agentic workflows.
 - **Modern UI Components**: Leverages Radix UI primitives and Lucide icons for accessible, high-quality interfaces.
-- **Vibrant Aesthetics**: Custom color palette featuring light grayish-blue backgrounds and subtle cyan accents.
 
 ## 🛠 Tech Stack
 
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Vanilla CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
-- **Backend/Auth**: [Supabase](https://supabase.com/) & [Firebase](https://firebase.google.com/)
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Hosting**: [Firebase App Hosting](https://firebase.google.com/docs/app-hosting)
 - **AI Tooling**: [Google Genkit](https://firebase.google.com/docs/genkit)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Vanilla CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Validation**: [Zod](https://zod.dev/) & [React Hook Form](https://react-hook-form.com/)
 
@@ -26,7 +28,7 @@ Aqua Access is a modern, minimalist authentication platform designed with a focu
 ### Prerequisites
 
 - Node.js (Latest LTS recommended)
-- A Supabase project for authentication
+- A Supabase project for authentication and database
 - Environment variables configured in `.env.local`
 
 ### Installation
@@ -60,11 +62,13 @@ The application will be available at `http://localhost:9002`.
 - `src/lib`: Core utilities (Supabase client, helper functions).
 - `docs/`: Design blueprints and project documentation.
 
-## 🎨 Design Principles
+## 🚢 Deployment
 
-- **Clarity**: Ample white space and clean typography.
-- **Responsiveness**: Fluid layouts that adapt to any screen size.
-- **Smoothness**: Subtle transition animations for an intuitive feel.
+DC Base is designed to be deployed onto **Firebase App Hosting**. 
+
+1. Ensure your project is connected to Firebase.
+2. The `apphosting.yaml` and `.idx` configurations are optimized for this environment.
+3. Database and Auth remain served by Supabase.
 
 ---
 Created by node-a
