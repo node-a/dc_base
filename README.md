@@ -7,7 +7,7 @@ DC Base (standing for DC Database) is a modern authentication and data managemen
 - **Minimal Style**: A clean, spacious UI with a focus on functional design and clarity.
 - **Secure Authentication**: Robust user authentication workflows powered by **Supabase Auth**.
 - **Integrated Database**: Data is hosted and securely managed on **Supabase**, providing a scalable and high-performance backend.
-- **Optimized Deployment**: Built for seamless deployment and scaling on **Firebase App Hosting**.
+- **Flexible Deployment**: Optimized for **Vercel**, but designed to be deployed **wherever you like** (e.g., Firebase, AWS, or any Node.js environment).
 - **Session Management**: Secure token-based session handling with middleware protection.
 - **AI Integration**: Built with Google Genkit, ready for intelligent agentic workflows.
 - **Modern UI Components**: Leverages Radix UI primitives and Lucide icons for accessible, high-quality interfaces.
@@ -17,7 +17,8 @@ DC Base (standing for DC Database) is a modern authentication and data managemen
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Database & Auth**: [Supabase](https://supabase.com/)
-- **Hosting**: [Firebase App Hosting](https://firebase.google.com/docs/app-hosting)
+- **Primary Hosting**: [Vercel](https://vercel.com/)
+- **Alternative Deployment**: [Firebase](https://firebase.google.com/), etc.
 - **AI Tooling**: [Google Genkit](https://firebase.google.com/docs/genkit)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Vanilla CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
 - **Icons**: [Lucide React](https://lucide.dev/)
@@ -64,11 +65,16 @@ The application will be available at `http://localhost:9002`.
 
 ## 🚢 Deployment
 
-DC Base is designed to be deployed onto **Firebase App Hosting**. 
+DC Base is highly flexible and can be deployed to your platform of choice.
 
-1. Ensure your project is connected to Firebase.
-2. The `apphosting.yaml` and `.idx` configurations are optimized for this environment.
-3. Database and Auth remain served by Supabase.
+### Deploy to Vercel (Recommended)
+The project is optimized for Vercel. Simply connect your GitHub repository to Vercel and it will auto-detect the Next.js configuration.
+
+### Deploy to Firebase
+You can also deploy to **Firebase App Hosting**. The repository includes configuration files (`apphosting.yaml`, `.idx`) that are compatible with Firebase environments.
+
+### Other Platforms
+Since this is a standard Next.js application, it can be containerized or deployed to any platform supporting Node.js.
 
 ---
 Created by node-a
