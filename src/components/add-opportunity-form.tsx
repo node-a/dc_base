@@ -21,6 +21,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { createOpportunity } from "@/app/actions/opportunity";
+import { useI18n } from "@/lib/i18n";
+
 
 const formSchema = z.object({
     opportunityCode: z.string().min(1, { message: "Opportunity code is required." }),
@@ -43,7 +45,9 @@ interface AddOpportunityFormProps {
 
 export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
     const { toast } = useToast();
+    const { t } = useI18n();
     const [isPending, startTransition] = useTransition();
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -108,9 +112,10 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
     return (
         <Card className="w-full border-none shadow-xl">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">New Opportunity</CardTitle>
-                <CardDescription>Add a new opportunity to your pipeline</CardDescription>
+                <CardTitle className="text-2xl font-bold">{t('newOpportunity')}</CardTitle>
+                <CardDescription>{t('addDescription')}</CardDescription>
             </CardHeader>
+
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -120,7 +125,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                 name="opportunityCode"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Opportunity Code *</FormLabel>
+                                        <FormLabel>{t('opportunityCode')} *</FormLabel>
+
                                         <FormControl>
                                             <Input placeholder="OPP-001" {...field} />
                                         </FormControl>
@@ -133,7 +139,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                 name="opportunityStatus"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Status *</FormLabel>
+                                        <FormLabel>{t('status')} *</FormLabel>
+
                                         <FormControl>
                                             <Input placeholder="Active" {...field} />
                                         </FormControl>
@@ -148,7 +155,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                             name="opportunityName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Opportunity Name *</FormLabel>
+                                    <FormLabel>{t('opportunityName')} *</FormLabel>
+
                                     <FormControl>
                                         <Input placeholder="Enterprise Solution Project" {...field} />
                                     </FormControl>
@@ -162,7 +170,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                             name="customerInfo"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Customer Info *</FormLabel>
+                                    <FormLabel>{t('customerInfo')} *</FormLabel>
+
                                     <FormControl>
                                         <Input placeholder="Acme Corporation" {...field} />
                                     </FormControl>
@@ -176,7 +185,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                             name="preSalesOwner"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Pre-sales Owner *</FormLabel>
+                                    <FormLabel>{t('preSalesOwner')} *</FormLabel>
+
                                     <FormControl>
                                         <Input placeholder="John Doe" {...field} />
                                     </FormControl>
@@ -190,7 +200,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                             name="opportunityAmount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Amount (USD)</FormLabel>
+                                    <FormLabel>{t('amount')} (USD)</FormLabel>
+
                                     <FormControl>
                                         <Input type="number" step="0.01" placeholder="50000.00" {...field} />
                                     </FormControl>
@@ -205,7 +216,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                 name="supportStartDate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Support Start Date</FormLabel>
+                                        <FormLabel>{t('supportStartDate')}</FormLabel>
+
                                         <FormControl>
                                             <Input type="date" {...field} />
                                         </FormControl>
@@ -218,7 +230,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                 name="supportEndDate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Support End Date</FormLabel>
+                                        <FormLabel>{t('supportEndDate')}</FormLabel>
+
                                         <FormControl>
                                             <Input type="date" {...field} />
                                         </FormControl>
@@ -241,8 +254,9 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                     </FormControl>
                                     <div className="space-y-1 leading-none">
                                         <FormLabel>
-                                            Travel Required
+                                            {t('needTravel')}
                                         </FormLabel>
+
                                     </div>
                                 </FormItem>
                             )}
@@ -255,7 +269,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                     name="travelDays"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Travel Days</FormLabel>
+                                            <FormLabel>{t('travelDays')}</FormLabel>
+
                                             <FormControl>
                                                 <Input type="number" placeholder="5" {...field} />
                                             </FormControl>
@@ -268,7 +283,8 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                     name="travelLocation"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Travel Destination</FormLabel>
+                                            <FormLabel>{t('travelDestination')}</FormLabel>
+
                                             <FormControl>
                                                 <Input placeholder="New York, USA" {...field} />
                                             </FormControl>
@@ -281,8 +297,9 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
 
                         <Button type="submit" className="w-full !mt-8" size="lg" disabled={isPending}>
                             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Create Opportunity
+                            {t('createOpportunity')}
                         </Button>
+
                     </form>
                 </Form>
             </CardContent>
