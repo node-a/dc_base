@@ -22,6 +22,10 @@ export async function createOpportunity(formData: FormData) {
     const opportunityAmount = formData.get('opportunityAmount') as string
     const supportStartDate = formData.get('supportStartDate') as string
     const supportEndDate = formData.get('supportEndDate') as string
+    const needTravel = formData.get('needTravel') as string
+    const travelDays = formData.get('travelDays') as string
+    const travelLocation = formData.get('travelLocation') as string
+    const opportunityDescription = formData.get('opportunityDescription') as string
 
     // Validate required fields
     if (!opportunityCode || !opportunityName || !opportunityStatus || !customerInfo || !preSalesOwner) {
@@ -36,9 +40,14 @@ export async function createOpportunity(formData: FormData) {
         opportunity_status: opportunityStatus,
         customer_info: customerInfo,
         pre_sales_owner: preSalesOwner,
+        need_travel: needTravel === 'true',
     }
 
     // Add optional fields if provided
+    if (opportunityDescription) {
+        opportunityData.opportunity_description = opportunityDescription
+    }
+
     if (opportunityAmount) {
         const amount = parseFloat(opportunityAmount)
         if (!isNaN(amount)) {
@@ -52,6 +61,17 @@ export async function createOpportunity(formData: FormData) {
 
     if (supportEndDate) {
         opportunityData.support_end_date = supportEndDate
+    }
+
+    if (travelDays) {
+        const days = parseInt(travelDays)
+        if (!isNaN(days)) {
+            opportunityData.travel_days = days
+        }
+    }
+
+    if (travelLocation) {
+        opportunityData.travel_location = travelLocation
     }
 
     // Insert the opportunity

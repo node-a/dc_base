@@ -14,6 +14,8 @@ import { logout } from '@/app/actions/auth';
 import { deleteOpportunity } from '@/app/actions/opportunity';
 import { LogOut, Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useI18n } from '@/lib/i18n';
+import { LanguageToggle } from '@/components/language-toggle';
 
 interface Opportunity {
     opportunity_code: string;
@@ -24,6 +26,9 @@ interface Opportunity {
     opportunity_amount?: number;
     support_start_date?: string;
     support_end_date?: string;
+    need_travel?: boolean;
+    travel_days?: number;
+    travel_location?: string;
 }
 
 interface Profile {
@@ -35,6 +40,7 @@ interface Profile {
 export default function DashboardPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const { t, language } = useI18n();
     const [user, setUser] = useState<any>(null);
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
@@ -115,14 +121,14 @@ export default function DashboardPage() {
 
         if (result?.error) {
             toast({
-                title: 'Failed to Delete Opportunity',
+                title: t('error'),
                 description: result.error,
                 variant: 'destructive',
             });
         } else {
             toast({
-                title: 'Success',
-                description: 'Opportunity deleted successfully!',
+                title: t('success'),
+                description: t('deleteSuccess'),
             });
 
             // Refresh opportunities
@@ -146,7 +152,7 @@ export default function DashboardPage() {
     if (loading) {
         return (
             <main className="min-h-screen bg-background p-4 md:p-8 flex items-center justify-center">
-                <div className="text-muted-foreground">Loading...</div>
+                <div className="text-muted-foreground">{t('loading')}</div>
             </main>
         );
     }
@@ -160,19 +166,19 @@ export default function DashboardPage() {
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Logo />
-                        <div>
-                            <h1 className="text-3xl font-bold">Dashboard</h1>
-                            <p className="text-muted-foreground">Welcome back, {displayName}</p>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-4">
+                            <Logo />
                         </div>
+                        <p className="text-muted-foreground ml-1">{t('welcomeBack')}, {displayName}</p>
                     </div>
                     <div className="flex items-center gap-3">
+                        <LanguageToggle />
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button size="sm" className="shadow-lg">
                                     <Plus className="mr-2 h-4 w-4" />
-                                    Add Opportunity
+                                    {t('addOpportunity')}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -182,7 +188,7 @@ export default function DashboardPage() {
                         <form action={logout}>
                             <Button variant="outline" size="sm" type="submit">
                                 <LogOut className="mr-2 h-4 w-4" />
-                                Logout
+                                {t('logout')}
                             </Button>
                         </form>
                     </div>
@@ -191,7 +197,7 @@ export default function DashboardPage() {
                 {/* Opportunities Table */}
                 <Card className="border-none shadow-xl">
                     <CardHeader>
-                        <CardTitle className="text-2xl">Your Opportunities</CardTitle>
+                        <CardTitle className="text-2xl">{t('yourOpportunities')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {error ? (
@@ -200,20 +206,21 @@ export default function DashboardPage() {
                             </div>
                         ) : opportunities.length === 0 ? (
                             <div className="text-muted-foreground p-8 text-center">
-                                No opportunities found. Start by creating your first opportunity!
+                                {t('noOpportunities')}
                             </div>
                         ) : (
                             <div className="rounded-md border">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Code</TableHead>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Customer</TableHead>
-                                            <TableHead>Owner</TableHead>
-                                            <TableHead className="text-right">Amount</TableHead>
-                                            <TableHead>Support Period</TableHead>
+                                            <TableHead>{t('code')}</TableHead>
+                                            <TableHead>{t('name')}</TableHead>
+                                            <TableHead>{t('status')}</TableHead>
+                                            <TableHead>{t('customer')}</TableHead>
+                                            <TableHead>{t('owner')}</TableHead>
+                                            <TableHead className="text-right">{t('amount')}</TableHead>
+                                            <TableHead>{t('supportPeriod')}</TableHead>
+                                            <TableHead>{t('travelInfo')}</TableHead>
                                             <TableHead className="w-[50px]"></TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -231,7 +238,7 @@ export default function DashboardPage() {
                                                 <TableCell>{opp.pre_sales_owner}</TableCell>
                                                 <TableCell className="text-right">
                                                     {opp.opportunity_amount
-                                                        ? new Intl.NumberFormat('en-US', {
+                                                        ? new Intl.NumberFormat(language === 'zh' ? 'zh-CN' : 'en-US', {
                                                             style: 'currency',
                                                             currency: 'USD'
                                                         }).format(opp.opportunity_amount)
@@ -241,6 +248,16 @@ export default function DashboardPage() {
                                                     {opp.support_start_date && opp.support_end_date
                                                         ? `${new Date(opp.support_start_date).toLocaleDateString()} - ${new Date(opp.support_end_date).toLocaleDateString()}`
                                                         : '-'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-col text-sm">
+                                                        <span>{opp.need_travel ? t('travelYes') : t('travelNo')}</span>
+                                                        {opp.need_travel && (
+                                                            <span className="text-muted-foreground text-xs">
+                                                                {opp.travel_location} ({opp.travel_days} days)
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button
@@ -265,20 +282,20 @@ export default function DashboardPage() {
                 <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogTitle>{t('areYouSure')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete the opportunity
+                                {t('deleteDescription')}
                                 <span className="font-semibold"> {opportunityToDelete}</span>.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel disabled={isDeleting}>{t('cancel')}</AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDeleteConfirm}
                                 disabled={isDeleting}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                                {isDeleting ? 'Deleting...' : 'Delete'}
+                                {isDeleting ? t('deleting') : t('delete')}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
