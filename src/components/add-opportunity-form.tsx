@@ -15,6 +15,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -24,11 +26,15 @@ const formSchema = z.object({
     opportunityCode: z.string().min(1, { message: "Opportunity code is required." }),
     opportunityName: z.string().min(1, { message: "Opportunity name is required." }),
     opportunityStatus: z.string().min(1, { message: "Status is required." }),
+    opportunityDescription: z.string().optional(),
     customerInfo: z.string().min(1, { message: "Customer info is required." }),
     preSalesOwner: z.string().min(1, { message: "Pre-sales owner is required." }),
-    opportunityAmount: z.string().optional(),
-    supportStartDate: z.string().optional(),
-    supportEndDate: z.string().optional(),
+    opportunityAmount: z.string().min(1, { message: "Amount is required." }),
+    supportStartDate: z.string().min(1, { message: "Support start date is required." }),
+    supportEndDate: z.string().min(1, { message: "Support end date is required." }),
+    needTravel: z.boolean().default(false),
+    travelDays: z.string().optional(),
+    travelLocation: z.string().optional(),
 });
 
 interface AddOpportunityFormProps {
@@ -45,11 +51,15 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
             opportunityCode: "",
             opportunityName: "",
             opportunityStatus: "",
+            opportunityDescription: "",
             customerInfo: "",
             preSalesOwner: "",
             opportunityAmount: "",
             supportStartDate: "",
             supportEndDate: "",
+            needTravel: false,
+            travelDays: "",
+            travelLocation: "",
         },
     });
 
@@ -61,15 +71,19 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
             formData.append('opportunityStatus', values.opportunityStatus);
             formData.append('customerInfo', values.customerInfo);
             formData.append('preSalesOwner', values.preSalesOwner);
+            formData.append('opportunityAmount', values.opportunityAmount);
+            formData.append('supportStartDate', values.supportStartDate);
+            formData.append('supportEndDate', values.supportEndDate);
+            formData.append('needTravel', String(values.needTravel));
 
-            if (values.opportunityAmount) {
-                formData.append('opportunityAmount', values.opportunityAmount);
+            if (values.opportunityDescription) {
+                formData.append('opportunityDescription', values.opportunityDescription);
             }
-            if (values.supportStartDate) {
-                formData.append('supportStartDate', values.supportStartDate);
+            if (values.travelDays) {
+                formData.append('travelDays', values.travelDays);
             }
-            if (values.supportEndDate) {
-                formData.append('supportEndDate', values.supportEndDate);
+            if (values.travelLocation) {
+                formData.append('travelLocation', values.travelLocation);
             }
 
             const result = await createOpportunity(formData);
@@ -213,6 +227,57 @@ export function AddOpportunityForm({ onSuccess }: AddOpportunityFormProps) {
                                 )}
                             />
                         </div>
+
+                        <FormField
+                            control={form.control}
+                            name="needTravel"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                            Travel Required
+                                        </FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        {form.watch("needTravel") && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="travelDays"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Travel Days</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="5" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="travelLocation"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Travel Destination</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="New York, USA" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
 
                         <Button type="submit" className="w-full !mt-8" size="lg" disabled={isPending}>
                             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
